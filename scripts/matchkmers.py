@@ -12,14 +12,15 @@ class MatchKmers:
                 if qkmer in rkmers:
                     tmp.append(qkmer)
 
-
             similarity = len(tmp)/len(self.kmers)
             if similarity >= 0.5:
-                relavent_reads[rid] = set(rkmers)
+                relavent_reads[rid] = rkmers
                 rr_overlap[rid] = similarity
 
+        return relavent_reads
 
-    def match_lr_kmers(self, relavent_reads):
+
+    def match_lr_kmers(self, relevant_reads):
 
         for rid, rkmers in self.reads_dict.items():
             tmp = []
@@ -29,4 +30,6 @@ class MatchKmers:
 
             similarity = len(tmp) / len(self.kmers)
             if similarity >= 0.5:
-                relavent_reads[rid] = set(rkmers)
+                relevant_reads[rid] = set(rkmers)
+
+        return relevant_reads

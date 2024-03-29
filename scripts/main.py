@@ -2,6 +2,7 @@ from Bio import SeqIO
 import makekmers
 import sys
 import matchkmers
+import order
 import time
 
 def main():
@@ -16,7 +17,6 @@ def main():
     fasta_reads = sys.argv[2]
     reads = [s for s in SeqIO.parse(fasta_reads,'fasta')]
     kmer_size = int(sys.argv[3])
-
 
     reads_dict = {}
     query_dict = {}
@@ -45,6 +45,7 @@ def main():
         matching = matchkmers.MatchKmers(qkmers, reads_dict)
         matching.match_query_kmers(relavent_reads, rr_overlap)
         relavent_reads[qid] = qkmers
+
 
     query_rr = len(relavent_reads) - 1
 
@@ -75,24 +76,27 @@ def main():
     #         if rr_kmer not in unique_kmers:
     #             unique_kmers.append(rr_kmer)
     #
-    # for unique_kmer in unique_kmers:
-    #     km1 = kmers.kmers.make_kmers(unique_kmer, km1_size)
-    #     km1_dict[unique_kmer] = km1
-
+    # for uniqueKmer in unique_kmers:
+    #     km1cuts = makekmers.MakeKmers(uniqueKmer, km1_size)
+    #     km1 = km1cuts.make_kmers()
+    #     km1_dict[uniqueKmer] = km1
+    #
     # total_kmers = len(km1_dict)
     # ordered_kmers = {}
     # current_order = 1
     #
+    #
+    # others = order.Order(km1_dict)
+    #
     # for kmer, km1ers in km1_dict.items():
-    #     all_others = kmers.kmers.all_other_km1ers(km1_dict, kmer)
-    #     if km1ers[1] in all_others and km1ers[0] not in all_others:
-    #         ordered_kmers[current_order] = kmer
+    #     others.otherKm1ers(kmer, km1ers, ordered_kmers, current_order)
+    #
     #
     # while current_order <= total_kmers:
     #     c_kmer = ordered_kmers[current_order]
     #     c_km1ers = km1_dict[c_kmer]
     #     next_order = current_order + 1
-    #     kmers.kmers.order_kmers(km1_dict, c_km1ers, c_kmer, ordered_kmers, next_order)
+    #     others.orderKmers(c_km1ers, c_kmer, ordered_kmers, next_order)
     #     current_order += 1
 
 if __name__ == '__main__':
