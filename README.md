@@ -19,10 +19,17 @@ Set up virtual environment and install requirements:
     source venv/bin/activate
     pip install -r install/requirements.txt 
 
+## Description of Scripts
+
+**main.py:** Main script to run     
+**makekmers.py:** Cuts strings into k-mers of desired size
+**matchkmers.py:** Finds reads with >= 50% k-mer similarity to the reference read
+**order.py:** Functions to put unique k-mers into the correct order for DBG assembly *(Note: still in development)*
+
 ## To Run
 
 **Required Input Files:**   
-The following inputs are required and are passed as arguments through command line.
+The following inputs are required and are passed as arguments in the following order through command line.
 
 * **query.fasta:** fasta file containing all target reads
 * **query.fasta:** fasta file containing all reference reads
@@ -53,22 +60,18 @@ checking for more relevent reads...
 found 106 additional reads overlapped
 time elapsed: 17 seconds
 ```
-Further into developement, an output files describing the longest overlapped sequence will also be provided.
+Further into development, an output files describing the longest overlapped sequence will also be provided.
 
-## Proof of Functionality Example
+## Testing
 
-A non-genomic example using a query and reads based on the word *rainbow* is provided as well. This example
-can be run by:
-
-    python .\example_run\main_e.py .\example_run\funQ.fasta .\example_run\funR.fasta 3
+Unittesting for the complete modules has been implemented. Manually curated ground truth examples were created for input to test
+basic functionality of the makekmers.py and matchkmers.py functions. To run unit test script:
+    
+    cd ./scripts 
+    python -m unittest unittesting.py
 
 Output:
 
-    creating 3-mers...
-    matching 4 reads to initial query...
-    {'3': {'AIN', 'INB'}, '6': ['RAI', 'AIN'], '4': {'NBO', 'INB'}, '1': {'BOW', 'NBO'}}
-    time elapsed: 0 seconds
+    Ran 2 tests in 0.021s
+    OK
 
-The dictionary printed includes the 3-mers of all relevant reads that were identified to reassemble the word "rainbow".
-Only an additional constraint of requiring the reads to share at least 50% of k-mers to be identified as relevant
-is added due to the lack of diversity in genomic sequences. 
