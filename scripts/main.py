@@ -8,16 +8,16 @@ import mapping
 
 def main():
 
-    make_kmer_st = time.time()
-    reads = [s for s in SeqIO.parse("./../example_data/READS.fasta", 'fasta')]
-    initial_queries = [r for r in SeqIO.parse("./../example_data/QUERY.fasta", 'fasta')]
-    kmer_size = 4
+    # make_kmer_st = time.time()
+    # reads = [s for s in SeqIO.parse("./../example_data/READS.fasta", 'fasta')]
+    # initial_queries = [r for r in SeqIO.parse("./../example_data/QUERY.fasta", 'fasta')]
+    # kmer_size = 4
 
-    # fasta_queries = sys.argv[1]
-    # initial_queries = [r for r in SeqIO.parse(fasta_queries,'fasta')]
-    # fasta_reads = sys.argv[2]
-    # reads = [s for s in SeqIO.parse(fasta_reads,'fasta')]
-    # kmer_size = int(sys.argv[3])
+    fasta_queries = sys.argv[1]
+    initial_queries = [r for r in SeqIO.parse(fasta_queries,'fasta')]
+    fasta_reads = sys.argv[2]
+    reads = [s for s in SeqIO.parse(fasta_reads,'fasta')]
+    kmer_size = int(sys.argv[3])
 
     reads_dict = {}
 
