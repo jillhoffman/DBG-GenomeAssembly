@@ -41,7 +41,7 @@ The following inputs are required and are passed as arguments in the following o
 Example data is provided in the *example_data* folder. This folder contains
 a large *READS.fasta* file of all reference reads and smaller 
 *READS.##.fasta* files, each containing ~12,000 sequences. The smaller files are recommended to 
-use for testing as run time is only ~4 minutes, compared to 19 minutes for all sequences. Below shows statistics 
+use for testing as run time is only ~2 minutes, compared to 19 minutes for all sequences. Below shows statistics 
 of identified reads based on different k-mer sizes. The recommended k-mer size for the example data is 4.
 
 ![](kmerstats.png)
