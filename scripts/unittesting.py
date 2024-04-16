@@ -1,40 +1,102 @@
 import unittest
+import mapping
 import makekmers
 import matchkmers
+import order
+import output
 from Bio import SeqIO
 
+rr_overlap = {}
 relevant_reads = {}
+reads_dict = {'NOMATCH': ['GTGC', 'TGCG', 'GCGA', 'CGAG', 'GAGT', 'AGTC', 'GTCG', 'TCGA', 'CGAG', 'GAGT', 'AGTC', 'GTCG'],
+              'FORWARD': ['AGTC', 'GTCG', 'TCGT', 'CGTA', 'GTAT'],
+              'BACKWARD': ['CCAG', 'CAGG', 'AGGT', 'GGTG', 'GTGC', 'TGCG']
+              }
+
+rr = {
+    'FORWARD': ['AGTC', 'GTCG', 'TCGT', 'CGTA', 'GTAT'],
+    'BACKWARD': ['CCAG', 'CAGG', 'AGGT', 'GGTG', 'GTGC', 'TGCG']
+}
+query = [s for s in SeqIO.parse('./../example_data/unittestq.fasta', 'fasta')]
+reads = [s for s in SeqIO.parse("./../example_data/unittest.fasta", 'fasta')]
+
+
 class TestKmers(unittest.TestCase):
 
     def testMakekmers(self):
 
-        reads = [s for s in SeqIO.parse('./../example_data/unittest.fasta', 'fasta')]
-        for read in reads:
-            read_str = str(read.seq)
-            test = makekmers.MakeKmers(read_str, 3)
-            self.assertEqual(test.make_kmers().sort(), ['GGG', 'GGC', 'GCC', 'CCC', 'CCC', 'CCA', 'CAG', 'AGC', 'GCA', 'CAC', \
-                                                 'ACC', 'CCT', 'CTG', 'TGA', 'GAC', 'ACT', 'CTT', 'TTG', 'TGG', 'GGC', 'GCC', 'CCT', 'CTC', \
-                                                 'TCC', 'CCT', 'CTC', 'TCC', 'CCC'].sort())
+        for q in query:
+            read_str = str(q.seq)
+            test = makekmers.MakeKmers(read_str, 4)
+            qkmers = test.make_kmers()
+            self.assertEqual(qkmers, ['GTGC', 'TGCG', 'GCGA', 'CGAG', 'GAGT', 'AGTC', 'GTCG'])
 
     def testMatchkmers(self):
-        query = [s for s in SeqIO.parse('./../example_data/QUERY.fasta', 'fasta')]
-        reads_dict = {'2S43D:05027:10155': ['GGG', 'GGC', 'GCC', 'CCC', 'CCC', 'CCA', 'CAG', 'AGC', 'GCA', 'CAC', \
-                                            'ACC', 'CCT', 'CTG', 'TGA', 'GAC', 'ACT', 'CTT', 'TTG', 'TGG', 'GGC', 'GCC', 'CCT', 'CTC', \
-                                            'TCC', 'CCT', 'CTC', 'TCC', 'CCC'],
-                      '2S43D:03036:10666': ['GAA', 'AAC', 'ACG', 'CGA', 'GAA', 'AAC', 'ACA', 'CAG', 'AGT', 'GTC', 'TCA', 'CAC', 'ACA', 'CAG', 'AGG', 'GGC', \
-                                            'GCA', 'CAA', 'AAA', 'AAT', 'ATC', 'TCC', 'CCA', 'CAG', 'AGG', 'GGC', 'GCG', 'CGG', 'GGT', 'GTC', 'TCA', 'CAT', 'ATG', \
-                                            'TGG', 'GGC', 'GCC', 'CCT', 'CTC', 'TCG', 'CGA', 'GAC', 'ACT', 'CTG', 'TGG', 'GGG', 'GGC', 'GCT', 'CTG', 'TGG', 'GGG', 'GGG', \
-                                            'GGG', 'GGG', 'GGG', 'GGG', 'GGA', 'GAT', 'ATT', 'TTG', 'TGA', 'GAA', 'AAG', 'AGC', 'GCT', 'CTC', 'TCA', 'CAA', 'AAA', 'AAG', \
-                                            'AGT', 'GTA', 'TAT', 'ATA', 'TAA', 'AAA', 'AAA', 'AAG', 'AGC', 'GCG', 'CGT', 'GTC', 'TCG', 'CGC', 'GCC', 'CCC', 'CCG', \
-                                            'CGC', 'GCT', 'CTG', 'TGG', 'GGA', 'GAA', 'AAG', 'AGG', 'GGC', 'GCT', 'CTG', 'TGC', 'GCG', 'CGG', 'GGC', 'GCG', 'CGC', \
-                                            'GCC', 'CCG', 'CGT', 'GTG', 'TGG', 'GGG', 'GGT', 'GTC', 'TCC', 'CCA', 'CAG', 'AGA', 'GAG', 'AGG', 'GGC', 'GCC', 'CCT', 'CTG', 'TGC', 'GCG', 'CGA', 'GAG', 'AGC', 'GCC', 'CCC', 'CCA', 'CAG', 'AGG', 'GGG', 'GGA'],
-                      }
 
         for q in query:
-            qStr = str(q.seq)
-            qkmersob = makekmers.MakeKmers(qStr, 3)
-            qkmers = qkmersob.make_kmers()
+            read_str = str(q.seq)
+            testMake = makekmers.MakeKmers(read_str, 4)
+            qkmers = testMake.make_kmers()
 
-            test = matchkmers.MatchKmers(qkmers, reads_dict)
+            testMatch = matchkmers.MatchKmers(qkmers, reads_dict)
+            self.assertEqual(testMatch.match_kmers(relevant_reads, rr_overlap, 'F'), rr)
 
-            self.assertEqual(list(test.match_lr_kmers(relevant_reads).keys())[0], '2S43D:03036:10666')
+    def testMakeMaps(self):
+        km1FMap = {}
+        mF = mapping.map(km1FMap)
+        km1All = [('GH', 'HI'), ('CD', 'BC')]
+
+        for km1 in km1All:
+            startF = km1[0]
+            targetF = km1[1]
+            mF.makeMaps(startF, targetF)
+
+        self.assertEqual(km1FMap, {'GH': ['HI'], 'CD':['BC']})
+
+    def testOrderForward(self):
+        fsD = {}
+        kd = order.Order(2)
+        newForQuery = 'CDEFGH'
+        mapF = {1: {'GH': ['HI']},
+                2: {'HI': ['IJ']}
+        }
+        jIDs = [1, 2]
+
+
+        for i in range(len(jIDs)):
+            ID = jIDs[i]
+
+            prevForQuery = newForQuery
+            newForQuery = kd.forwardSort(prevForQuery, mapF, ID, i, fsD)
+
+        self.assertEqual(newForQuery, 'CDEFGHIJ')
+
+    def testOrderBackward(self):
+        bsD = {}
+        kd = order.Order(2)
+        newForQuery = 'CDEFGH'
+
+        mapB = {1: {'CD': ['BC']},
+                2: {'BC': ['AB']}
+                }
+
+        jIDs = [1, 2]
+
+        for i in range(len(jIDs)):
+            ID = jIDs[i]
+
+            prevForQuery = newForQuery
+            newForQuery = kd.backwardSort(prevForQuery, mapB, ID, i, bsD)
+
+        self.assertEqual(newForQuery, 'ABCDEFGH')
+
+    def testOutput(self):
+
+        o = output.outputNeeds(reads)
+        sid = 'FORWARD'
+        cut = 'TCGT'
+        sstart, send = o.ssidInfo(sid, cut)
+
+        self.assertEqual((sstart, send), (2, 6))
+
+

@@ -22,9 +22,12 @@ Set up virtual environment and install requirements:
 ## Description of Scripts
 
 **main.py:** Main script to run     
-**makekmers.py:** Cuts strings into k-mers of desired size
-**matchkmers.py:** Finds reads with >= 50% k-mer similarity to the reference read
-**order.py:** Functions to put unique k-mers into the correct order for DBG assembly *(Note: still in development)*
+**makekmers.py:** Cuts strings into k-mers of desired size  
+**matchkmers.py:** Finds reads with 10%-90% k-mer similarity to the query read
+**mapping.py:** Creates dictionary to map k-mers
+**order.py:** Functions to put unique k-mers into the correct order for DBG assembly 
+**output.py:** Preps information for .aln output file
+**unittesting.py:** Unit testing for functions 
 
 ## To Run
 
@@ -37,8 +40,8 @@ The following inputs are required and are passed as arguments in the following o
 
 Example data is provided in the *example_data* folder. This folder contains
 a large *READS.fasta* file of all reference reads and smaller 
-*READS.##.fasta* files, each containing ~5,000 sequences. The smaller files are recommended to 
-use for testing as run time is only 17s, compared to 4 minutes for all sequences. Below shows statistics 
+*READS.##.fasta* files, each containing ~12,000 sequences. The smaller files are recommended to 
+use for testing as run time is only ~4 minutes, compared to 19 minutes for all sequences. Below shows statistics 
 of identified reads based on different k-mer sizes. The recommended k-mer size for the example data is 4.
 
 ![](kmerstats.png)
@@ -48,30 +51,45 @@ of identified reads based on different k-mer sizes. The recommended k-mer size f
 ```
 python scripts/main.py ./example_data/QUERY.fasta ./example_data/READS.01.fasta  4
 ```
-In this example the first set of 5,000 reads are being used and a 4-mers are being used. The "01" in *READS.01.fasta* 
-can be switched with any number 01-23, or for the whole file *READS.fasta*
+In this example the first set of 12,000 reads are being used and a 4-mers are being used. The "01" in *READS.01.fasta* 
+can be switched with any number 01-09, or for the whole file *READS.fasta*
 
-**Output:**
+**Output using test file:**
 ```
 creating 4-mers...
-matching 5184 reads to initial query...
-matched 578 reads, the highest at (76.74418604651163%) kmer overlap
-checking for more relevent reads...
-found 106 additional reads overlapped
-time elapsed: 17 seconds
+matching 12434 reads to initial query...
+matched 9545 reads
+time elapsed: 115 seconds
+extending original query...
+assembled 1 alleles with 658 bps
+time elapsed: 2 seconds
 ```
-Further into development, an output files describing the longest overlapped sequence will also be provided.
+**Output using whole file:**
+
+```
+creating 4-mers...
+matching 124520 reads to initial query...
+matched 96582 reads
+time elapsed: 1136 seconds
+extending original query...
+assembled 1 alleles with 658 bps
+time elapsed: 25 seconds
+```
+The following output files include stats on the longest created contig. Example files can be found in the outputs folder:
+
+**ALLELES.fasta:** FASTA file containing the sequence of the longest created contig     
+**ALLELES.aln:** Tab-delimeted file mapping location of reads in the contig
 
 ## Testing
 
-Unittesting for the complete modules has been implemented. Manually curated ground truth examples were created for input to test
-basic functionality of the makekmers.py and matchkmers.py functions. To run unit test script:
+Unittesting for the modules has been implemented. Manually curated ground truth examples were created for input to test
+basic functionality of the different functions. To run unit test script:
     
     cd ./scripts 
     python -m unittest unittesting.py
 
 Output:
 
-    Ran 2 tests in 0.021s
+    Ran 6 tests in 0.002s
     OK
 
