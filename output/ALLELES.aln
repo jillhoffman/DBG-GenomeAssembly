@@ -1,0 +1,3 @@
+sseqid	qsid	sstart	send	qstart	qend
+INITIAL_QUERY	CONTIG0_L=658	1	648	1	648
+2S43D:07939:04148	CONTIG0_L=658	0	9	649	658

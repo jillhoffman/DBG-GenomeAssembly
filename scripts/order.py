@@ -1,29 +1,76 @@
+import random
+
+
 class Order():
 
-    def __init__(self, km1_dict):
-        self.km1_dict = km1_dict
+    def __init__(self, km1Size):
+        self.km1Size = km1Size
 
 
-    def otherKm1ers(self, kmer, km1ers, ordered_kmers, cOrder):
 
-        firstKm1ers = []
-        secondKm1ers = []
+    def forwardSort(self, query_str, mapF, ID, i, fsD):
 
-        for kmer2, km1ers2 in self.km1_dict.items():
-            if kmer != kmer2:
-                firstKm1ers.append(km1ers2[0])
-                secondKm1ers.append(km1ers2[1])
+        lastx = query_str[-self.km1Size:]
 
-        if km1ers[1] in firstKm1ers and km1ers[0] not in secondKm1ers:
-            ordered_kmers[cOrder] = kmer
+        map = mapF[ID]
 
-        return ordered_kmers
+        if lastx in map.keys():
+            possAdds = map[lastx]
 
-    def orderKmers(self, current_km1ers, current_kmer, ordered_kmers, nOrder):
+        else:
+            possAdds = []
 
-        for kmer, k1mers in self.km1_dict.items():
-            if current_km1ers[1] == k1mers[0] and kmer != current_kmer:
-                if nOrder not in list(ordered_kmers.keys()):
-                    ordered_kmers[nOrder] = kmer
-                else:
-                    ordered_kmers[nOrder] = [ordered_kmers[nOrder], kmer]
+        if len(possAdds) > 0:
+            add = random.choice(possAdds)
+            map[lastx].remove(add)
+            newQuery = "".join([query_str, add[-1:]])
+
+            if ID not in fsD.keys():
+                fsD[ID] = [i]
+
+            else:
+                new = []
+                for n in fsD[ID]:
+                    new.append(n)
+
+                new.append(i)
+                fsD[ID] = new
+
+            return newQuery
+
+        else:
+
+            return query_str
+
+    def backwardSort(self, query_str, mapB, ID, i, bsD):
+        firstx = query_str[:self.km1Size]
+
+        map = mapB[ID]
+
+        if firstx in map.keys():
+            possAdds = map[firstx]
+
+        else:
+            possAdds = []
+
+        if len(possAdds) > 0:
+            add = random.choice(possAdds)
+            map[firstx].remove(add)
+            newQuery = "".join([add[:1], query_str])
+
+            if ID not in bsD.keys():
+                bsD[ID] = [i]
+            else:
+                new = []
+                for n in bsD[ID]:
+                    new.append(n)
+
+                new.append(i)
+                bsD[ID] = new
+
+            return newQuery
+
+        else:
+
+            return query_str
+

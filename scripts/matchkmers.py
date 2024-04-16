@@ -5,31 +5,25 @@ class MatchKmers:
         self.reads_dict = reads_dict
 
 
-    def match_query_kmers(self, relavent_reads, rr_overlap):
+    def match_kmers(self, relavent_reads, rr_overlap, q):
+
         for rid, rkmers in self.reads_dict.items():
             tmp = []
-            for qkmer in self.kmers:
-                if qkmer in rkmers:
-                    tmp.append(qkmer)
 
-            similarity = len(tmp)/len(self.kmers)
-            if similarity >= 0.5:
+            for rkmer in rkmers:
+
+                if rkmer in self.kmers:
+                    tmp.append(rkmer)
+
+            similarity = len(tmp)/len(rkmers)
+
+            if 0.1 < similarity <= 0.9:
                 relavent_reads[rid] = rkmers
-                rr_overlap[rid] = similarity
+
+                if q=="T":
+                    rr_overlap[rid] = similarity
+
+                else:
+                    rr_overlap[rid] = 0
 
         return relavent_reads
-
-
-    def match_lr_kmers(self, relevant_reads):
-
-        for rid, rkmers in self.reads_dict.items():
-            tmp = []
-            for qkmer in self.kmers:
-                if qkmer in rkmers:
-                    tmp.append(qkmer)
-
-            similarity = len(tmp) / len(self.kmers)
-            if similarity >= 0.5:
-                relevant_reads[rid] = set(rkmers)
-
-        return relevant_reads
